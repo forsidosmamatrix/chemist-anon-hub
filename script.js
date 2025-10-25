@@ -4,13 +4,13 @@ import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, q
 
 // Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyA8cQId-Wnwuo56efQuwSeQGxZEY5-YqbE",
-    authDomain: "chemistry-voice-hub.firebaseapp.com",
-    projectId: "chemistry-voice-hub",
-    storageBucket: "chemistry-voice-hub.firebasestorage.app",
-    messagingSenderId: "132800280681",
-    appId: "1:132800280681:web:6a3b02f5fb540f93498af8",
-    measurementId: "G-Z006B6ZWG4"
+  apiKey: "AIzaSyAPyIt9nTNxB4-OVtM10i_YvYZ3462Rs90",
+  authDomain: "chemist-anon-hub.firebaseapp.com",
+  projectId: "chemist-anon-hub",
+  storageBucket: "chemist-anon-hub.firebasestorage.app",
+  messagingSenderId: "513901879719",
+  appId: "1:513901879719:web:fc4038a237e4049e359682",
+  measurementId: "G-92GBQ3PZ4D"
 };
 
 // Initialize Firebase
@@ -694,3 +694,4 @@ window.rejectNote = rejectNote;
 window.deleteApprovedNote = deleteApprovedNote;
 
 window.deleteGalleryItem = deleteGalleryItem;
+
