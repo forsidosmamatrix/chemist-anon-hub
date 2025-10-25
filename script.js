@@ -395,7 +395,7 @@ function renderGallery() {
     
     container.innerHTML = gallery.map(item => `
         <div class="gallery-item">
-            <img src="${item.src}" alt="Dokumentasi">
+            <img src="${item.src}" alt="Dokumentasi" onclick="window.openLightbox('${item.id}')" style="cursor: pointer;">
             <div class="gallery-caption">
                 <p>${item.desc}</p>
                 <div class="interaction-bar">
@@ -427,7 +427,7 @@ function renderGalleryAdmin() {
     
     container.innerHTML = gallery.map(item => `
         <div class="gallery-item">
-            <img src="${item.src}" alt="Dokumentasi">
+            <img src="${item.src}" alt="Dokumentasi" onclick="window.openLightbox('${item.id}')" style="cursor: pointer;">
             <div class="gallery-caption">
                 <p>${item.desc} <span class="admin-badge">Admin</span></p>
                 <div class="interaction-bar">
@@ -784,4 +784,5 @@ window.closeLightbox = function() {
         document.body.style.overflow = 'auto';
     }
 };
+
 
