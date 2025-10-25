@@ -12,10 +12,6 @@ Platform pesan anonim dan gallery dokumentasi untuk Chemistry Class. Dibangun de
 - 🖼️ **Lightbox Gallery** - Lihat foto dalam mode layar penuh
 - 🔐 **Firebase Authentication** - Login admin yang aman
 
-## 🚀 Demo
-
-[Live Demo](https://your-project.vercel.app) _(ganti dengan URL Anda)_
-
 ## 📋 Prasyarat
 
 Sebelum memulai, pastikan Anda memiliki:
