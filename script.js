@@ -1,6 +1,7 @@
 // Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
 import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -16,6 +17,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 // Generate anonymous user ID and store it locally
 let userId = localStorage.getItem("userId");
@@ -29,7 +31,7 @@ console.log("Current Anonymous User ID:", userId);
 let approvedNotes = [];
 let pendingNotes = [];
 let gallery = [];
-let isAdminLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
+let isAdminLoggedIn = false;
 
 // Search functionality
 let searchTimeout;
@@ -531,15 +533,52 @@ function updateStats() {
     document.getElementById('total-images').textContent = gallery.length;
 }
 
-function checkAdmin() {
+// Listen to auth state changes
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        isAdminLoggedIn = true;
+        showAdminFeatures();
+        console.log('Admin logged in:', user.email);
+    } else {
+        isAdminLoggedIn = false;
+        hideAdminFeatures();
+        console.log('Admin logged out');
+    }
+});
+
+async function checkAdmin() {
+    const email = document.getElementById('admin-email').value.trim();
     const password = document.getElementById('admin-password').value;
     
-    if (password === 'Ketupel 2 periode') {
-        isAdminLoggedIn = true;
-        sessionStorage.setItem('adminLoggedIn', 'true');
-        showAdminFeatures();
-    } else {
-        alert('Password admin salah!');
+    if (!email || !password) {
+        alert('Email dan password harus diisi!');
+        return;
+    }
+    
+    const loginBtn = event.target;
+    const originalText = loginBtn.innerHTML;
+    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Login...';
+    loginBtn.disabled = true;
+    
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+        console.error('Login error:', error);
+        let errorMessage = 'Login gagal!';
+        
+        if (error.code === 'auth/invalid-email') {
+            errorMessage = 'Format email tidak valid!';
+        } else if (error.code === 'auth/user-not-found') {
+            errorMessage = 'Email tidak terdaftar!';
+        } else if (error.code === 'auth/wrong-password') {
+            errorMessage = 'Password salah!';
+        } else if (error.code === 'auth/invalid-credential') {
+            errorMessage = 'Email atau password salah!';
+        }
+        
+        alert(errorMessage);
+        loginBtn.innerHTML = originalText;
+        loginBtn.disabled = false;
     }
 }
 
@@ -547,6 +586,12 @@ function showAdminFeatures() {
     document.getElementById('admin-login').style.display = 'none';
     document.getElementById('admin-panel').style.display = 'block';
     document.getElementById('upload-panel').style.display = 'block';
+    
+    const userEmail = auth.currentUser ? auth.currentUser.email : '';
+    const emailDisplay = document.getElementById('admin-email-display');
+    if (emailDisplay) {
+        emailDisplay.textContent = userEmail;
+    }
     
     updateStats();
     renderPendingNotes();
@@ -560,11 +605,13 @@ function hideAdminFeatures() {
     document.getElementById('upload-panel').style.display = 'none';
 }
 
-function logoutAdmin() {
-    isAdminLoggedIn = false;
-    sessionStorage.removeItem('adminLoggedIn');
-    hideAdminFeatures();
-    document.getElementById('admin-password').value = '';
+async function logoutAdmin() {
+    try {
+        await signOut(auth);
+    } catch (error) {
+        console.error('Logout error:', error);
+        alert('Gagal logout!');
+    }
 }
 
 // Event Listeners
@@ -784,5 +831,6 @@ window.closeLightbox = function() {
         document.body.style.overflow = 'auto';
     }
 };
+
 
 
