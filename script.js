@@ -692,6 +692,96 @@ window.logoutAdmin = logoutAdmin;
 window.approveNote = approveNote;
 window.rejectNote = rejectNote;
 window.deleteApprovedNote = deleteApprovedNote;
-
 window.deleteGalleryItem = deleteGalleryItem;
+
+// Lightbox functions
+window.openLightbox = function(imageId) {
+    const item = gallery.find(i => i.id === imageId);
+    if (!item) return;
+    
+    // Create lightbox
+    const lightbox = document.createElement('div');
+    lightbox.id = 'lightbox';
+    lightbox.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        padding: 20px;
+        box-sizing: border-box;
+    `;
+    
+    lightbox.innerHTML = `
+        <button onclick="window.closeLightbox()" style="
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 32px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        " onmouseover="this.style.background='rgba(255, 255, 255, 0.3)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.2)'">
+            <i class="fas fa-times"></i>
+        </button>
+        <img src="${item.src}" alt="Dokumentasi" style="
+            max-width: 90%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 10px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+        ">
+        <div style="
+            color: white;
+            margin-top: 20px;
+            text-align: center;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 25px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        ">
+            <p style="margin: 0; font-size: 16px;">${item.desc}</p>
+        </div>
+    `;
+    
+    // Close on click outside
+    lightbox.addEventListener('click', function(e) {
+        if (e.target === lightbox) {
+            window.closeLightbox();
+        }
+    });
+    
+    // Close on ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            window.closeLightbox();
+        }
+    });
+    
+    document.body.appendChild(lightbox);
+    document.body.style.overflow = 'hidden';
+};
+
+window.closeLightbox = function() {
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox) {
+        lightbox.remove();
+        document.body.style.overflow = 'auto';
+    }
+};
 
